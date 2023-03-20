@@ -1,0 +1,40 @@
+{
+  "name": "pingpongas",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo/webpack-config": "^18.0.1",
+    "@react-native-async-storage/async-storage": "^1.17.11",
+    "@react-native-picker/picker": "^2.4.8",
+    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/native-stack": "^6.9.12",
+    "@react-navigation/stack": "^6.3.16",
+    "expo": "^1.0.0",
+    "expo-image-picker": "^14.1.1",
+    "expo-status-bar": "~1.4.4",
+    "metro-core": "^0.76.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-native": "0.71.3",
+    "react-native-dropdown": "^0.0.6",
+    "react-native-dropdown-picker": "^5.4.6",
+    "react-native-fast-image": "^8.6.3",
+    "react-native-modal-dropdown": "^1.0.2",
+    "react-native-numeric-input": "^1.9.1",
+    "react-native-picker-select": "^8.0.4",
+    "react-native-searchable-dropdown": "^1.1.3",
+    "react-native-select-dropdown": "^3.3.0",
+    "react-native-web": "~0.18.10",
+    "react-router": "^6.9.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0"
+  },
+  "private": true
+}

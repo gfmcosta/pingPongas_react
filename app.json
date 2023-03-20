@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "PingPongas",
+    "slug": "PingPongas",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "https://mobimg.b-cdn.net/v2/fetch/2f/2f122b890294529f3cc48a36e82773c4.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "https://i.pinimg.com/originals/95/bf/ae/95bfae2de987bf5694a00092142a3dd6.gif",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "https://mobimg.b-cdn.net/v2/fetch/2f/2f122b890294529f3cc48a36e82773c4.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "https://mobimg.b-cdn.net/v2/fetch/2f/2f122b890294529f3cc48a36e82773c4.png"
+    }
+  }
+}
