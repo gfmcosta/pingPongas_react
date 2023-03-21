@@ -51,20 +51,33 @@ export default function Menu({navigation}) {
           await AsyncStorage.setItem('winStreak', ''+data.winStreak);
           await AsyncStorage.setItem('bestWinStreak', ''+data.bestWinStreak);
           
-          axios.get('http://rafaelr2001.pythonanywhere.com/foto/'+ user_id + '/nao_interessa_a_ninguem')
-            .then(async response => {
-              const photoData = response.data;
-              const base64EncodedPhotoData = Buffer.from(photoData).toString('base64');
-              
-              // console.log(base64EncodedPhotoData);
+          const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + user_id + '/nao_interessa_a_ninguem',{
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          });
+          const data_photo = await response_photo.json();
+          // console.log(data_photo.photo_data);
+          await AsyncStorage.setItem('imagem', ''+data_photo.photo_data);
+          await AsyncStorage.setItem('another_id', ''+ user_id);
 
-              // const base64EncodedPhotoData = btoa(String.fromCharCode.apply(null, photoData));
+          // axios.get('http://rafaelr2001.pythonanywhere.com/foto/'+ user_id + '/nao_interessa_a_ninguem')
+          //   .then(async response => {
+          //     const photoData = response.data;
+          //     console.log(photoData);
+          //     // const base64EncodedPhotoData = Buffer.from(photoData).toString('base64');
               
-              await AsyncStorage.setItem('imagem', ''+base64EncodedPhotoData);
-            })
-            .catch(error => {
-              console.log(error);
-            });
+          //     // console.log(base64EncodedPhotoData);
+
+          //     // const base64EncodedPhotoData = btoa(String.fromCharCode.apply(null, photoData));
+              
+          //     await AsyncStorage.setItem('imagem', ''+photoData);
+          //   })
+          //   .catch(error => {
+          //     console.log(error);
+          //   });
             
           navigation.navigate("Profile");
         } 

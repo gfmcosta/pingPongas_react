@@ -5,8 +5,10 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 export default function ProfilePage({navigation}) {
+  const [loggedId, setLoggedId] = useState('');
+  const [anotherId, setAnotherId] = useState('');
   const [name, setName] = useState('');
-  const [imagem, setImagem] = useState('');
+  const [imagem, setImagem] = useState(null);
   const [score, setScore] = useState('');
   const [bestScore, setBestScore] = useState('');
   const [numGamesPlayed, setNumGamesPlayed] = useState('');
@@ -51,6 +53,8 @@ export default function ProfilePage({navigation}) {
 
   const getUserData = async () => {
     try {
+      setLoggedId(await AsyncStorage.getItem('logged_id'));
+      setAnotherId(await AsyncStorage.getItem('another_id'));
       setName(await AsyncStorage.getItem('user_name'));
       setScore(await AsyncStorage.getItem('score'));
       setBestScore(await AsyncStorage.getItem('bestScore'));
@@ -59,11 +63,13 @@ export default function ProfilePage({navigation}) {
       setBestWinStreak(await AsyncStorage.getItem('bestWinStreak'));
       setWinStreak(await AsyncStorage.getItem('winStreak'));
       setWinPercentage(await AsyncStorage.getItem('victoryChance'));
-      // setImagem(await AsyncStorage.getItem('imagem'));
+      setImagem(await AsyncStorage.getItem('imagem'));
+      
+      // console.log(imagem);
       
       // const photoUri = `data:image/jpeg;base64,${imagem}`;
       // setImagem(photoUri)
-      // console.log(`data:image/jpeg;base64,${imagem}`);
+      //console.log(`data:image/jpeg;base64,${imagem}`);
 
     } catch (error) {
       console.error(error);
@@ -76,12 +82,14 @@ export default function ProfilePage({navigation}) {
     <StatusBar backgroundColor="#f4511e" barStyle="dark-content" />
       <Image
         style={styles.avatar}
-        // source={{ uri: imagem }}
+        source={{ uri: `data:image/jpeg;base64,${imagem}` }}
       />
 
-      <TouchableOpacity onPress={enviarImagem}>
-        <Text style={styles.changeImage}>Change Image</Text>
-      </TouchableOpacity>
+      {loggedId === anotherId ? (
+        <TouchableOpacity onPress={enviarImagem}>
+          <Text style={styles.changeImage}>Change Image</Text>
+        </TouchableOpacity>
+      ) : null}
 
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
@@ -121,8 +129,9 @@ export default function ProfilePage({navigation}) {
 const styles = StyleSheet.create({
   changeImage: {
     fontSize: 16,
+    textAlign: 'center',
     color: '#f4511e',
-    marginTop: 8,
+    marginBottom: 20,
   },
   container: {
     flex: 1,

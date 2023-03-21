@@ -39,9 +39,21 @@ const handleButtonClick = async(user_id,name) => {
       await AsyncStorage.setItem('victoryChance', ''+data.victoryChance);
       await AsyncStorage.setItem('winStreak', ''+data.winStreak);
       await AsyncStorage.setItem('bestWinStreak', ''+data.bestWinStreak);
-      navigation.navigate("Profile");
     } 
 
+    const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + user_id + '/nao_interessa_a_ninguem',{
+      method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+    });
+    
+    const data_photo = await response_photo.json();
+    await AsyncStorage.setItem('imagem', ''+data_photo.photo_data);
+    await AsyncStorage.setItem('another_id', ''+ user_id);
+
+    navigation.navigate("Profile");
   } catch (error) {
     console.error(error);
   }
@@ -94,6 +106,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 32,
     height: 32,
+    textAlign: 'center',
     marginRight: 8,
   },
   title: {
