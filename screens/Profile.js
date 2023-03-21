@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
@@ -17,6 +17,21 @@ export default function ProfilePage({navigation}) {
   const [winStreak, setWinStreak] = useState('');
   const [winPercentage, setWinPercentage] = useState('');
   const [selectedImageR, setSelectedImageR] = useState(null);
+  const [visible, setVisible] = useState(false);
+
+
+  const showAlert = (titulo, mensagem) => {
+    Alert.alert(
+      titulo,
+      mensagem,
+      [
+        {
+          text: 'OK',
+          onPress: () => setVisible(false),
+        },
+      ]
+    );
+  };
 
   async function enviarImagem() {
     let resultado = await ImagePicker.launchImageLibraryAsync({
@@ -27,7 +42,7 @@ export default function ProfilePage({navigation}) {
     });
     
     let id = await AsyncStorage.getItem('logged_id');
-    if (!resultado.cancelled) {
+    if (resultado.assets != null) {
       let formData = new FormData();
       formData.append('imagem', {
         uri: resultado.uri,
@@ -42,11 +57,13 @@ export default function ProfilePage({navigation}) {
         },
       })
       .then(response => {
-        // rconsole.log(response);
+        
       })
       .catch(error => {
         console.log(error);
       });
+      showAlert('Sucesso', 'Imagem alterada com sucesso');
+      navigation.navigate("Menu");
     }
   }
   
