@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 
 export default function ProfilePage({navigation}) {
   const [name, setName] = useState('');
+  const [imagem, setImagem] = useState('');
   const [score, setScore] = useState('');
   const [bestScore, setBestScore] = useState('');
   const [numGamesPlayed, setNumGamesPlayed] = useState('');
@@ -11,6 +14,40 @@ export default function ProfilePage({navigation}) {
   const [bestWinStreak, setBestWinStreak] = useState('');
   const [winStreak, setWinStreak] = useState('');
   const [winPercentage, setWinPercentage] = useState('');
+  const [selectedImageR, setSelectedImageR] = useState(null);
+
+  async function enviarImagem() {
+    let resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    
+    let id = await AsyncStorage.getItem('logged_id');
+    if (!resultado.cancelled) {
+      let formData = new FormData();
+      formData.append('imagem', {
+        uri: resultado.uri,
+        name: id + '.jpg',
+        type: 'image/jpg',
+      });
+
+      console.log(id);
+      axios.post('http://rafaelr2001.pythonanywhere.com/upload/' + id + '/nao_interessa_a_ninguem', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(response => {
+        // rconsole.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
+  }
+  
 
   const getUserData = async () => {
     try {
@@ -21,21 +58,31 @@ export default function ProfilePage({navigation}) {
       setNumGamesWon(await AsyncStorage.getItem('gamesWon'));
       setBestWinStreak(await AsyncStorage.getItem('bestWinStreak'));
       setWinStreak(await AsyncStorage.getItem('winStreak'));
-      setWinPercentage(await AsyncStorage.getItem('victoryChance')); 
-      console.log("name:",name);
+      setWinPercentage(await AsyncStorage.getItem('victoryChance'));
+      // setImagem(await AsyncStorage.getItem('imagem'));
+      
+      // const photoUri = `data:image/jpeg;base64,${imagem}`;
+      // setImagem(photoUri)
+      // console.log(`data:image/jpeg;base64,${imagem}`);
 
     } catch (error) {
       console.error(error);
     }
   }
   getUserData();
+
   return(
     <SafeAreaView style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
     <StatusBar backgroundColor="#f4511e" barStyle="dark-content" />
       <Image
         style={styles.avatar}
-        source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2112/2112172.png' }}
+        // source={{ uri: imagem }}
       />
+
+      <TouchableOpacity onPress={enviarImagem}>
+        <Text style={styles.changeImage}>Change Image</Text>
+      </TouchableOpacity>
+
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.score}>Pontuação: {score} pts</Text>
@@ -51,7 +98,7 @@ export default function ProfilePage({navigation}) {
           <View style={[styles.stat, winPercentage >50 ? styles.statG : null]}>
             <Text style={[styles.statLabel, winPercentage >50 ? styles.statLabelG : null]}>% de Vitória</Text>
             <Text style={styles.statValue}>{winPercentage}%</Text>
-            
+
           </View>
           <View style={styles.stat}>
             <Text style={styles.statLabel}>Partidas ganhas</Text>
@@ -72,6 +119,11 @@ export default function ProfilePage({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  changeImage: {
+    fontSize: 16,
+    color: '#f4511e',
+    marginTop: 8,
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFF',

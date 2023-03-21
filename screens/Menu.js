@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { Alert, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import axios from 'axios';
+import { Buffer } from 'buffer';
 
 export default function Menu({navigation}) {
   const [visible, setVisible] = useState(false);
@@ -48,6 +50,22 @@ export default function Menu({navigation}) {
           await AsyncStorage.setItem('victoryChance', ''+data.victoryChance);
           await AsyncStorage.setItem('winStreak', ''+data.winStreak);
           await AsyncStorage.setItem('bestWinStreak', ''+data.bestWinStreak);
+          
+          axios.get('http://rafaelr2001.pythonanywhere.com/foto/'+ user_id + '/nao_interessa_a_ninguem')
+            .then(async response => {
+              const photoData = response.data;
+              const base64EncodedPhotoData = Buffer.from(photoData).toString('base64');
+              
+              // console.log(base64EncodedPhotoData);
+
+              // const base64EncodedPhotoData = btoa(String.fromCharCode.apply(null, photoData));
+              
+              await AsyncStorage.setItem('imagem', ''+base64EncodedPhotoData);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+            
           navigation.navigate("Profile");
         } 
     
