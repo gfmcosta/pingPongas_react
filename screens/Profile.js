@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Alert, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import axios from 'axios';
 
 export default function ProfilePage({navigation}) {
@@ -19,7 +20,6 @@ export default function ProfilePage({navigation}) {
   const [selectedImageR, setSelectedImageR] = useState(null);
   const [visible, setVisible] = useState(false);
 
-
   const showAlert = (titulo, mensagem) => {
     Alert.alert(
       titulo,
@@ -33,43 +33,27 @@ export default function ProfilePage({navigation}) {
     );
   };
 
-  async function enviarImagem() {
-    let resultado = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    
-    let id = await AsyncStorage.getItem('logged_id');
-    if (resultado.assets != null) {
-      let formData = new FormData();
-      formData.append('imagem', {
-        uri: resultado.uri,
-        name: id + '.jpg',
-        type: 'image/jpg',
-      });
-
-      console.log(id);
-      axios.post('http://rafaelr2001.pythonanywhere.com/upload/' + id + '/nao_interessa_a_ninguem', formData, {
+  const getUserImage = async () => {
+    try {
+      const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + loggedId + '/nao_interessa_a_ninguem',{
+        method: "GET",
         headers: {
-          'Content-Type': 'multipart/form-data',
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-      })
-      .then(response => {
-        
-      })
-      .catch(error => {
-        console.log(error);
       });
-      showAlert('Sucesso', 'Imagem alterada com sucesso');
-      navigation.navigate("Menu");
+      const data_photo = await response_photo.json();
+      // console.log(data_photo.photo_data);
+      setImagem(data_photo.photo_data);
+    }
+    catch (error) {
+      console.error(error);
     }
   }
-  
 
   const getUserData = async () => {
     try {
+      // getUserImage();
       setLoggedId(await AsyncStorage.getItem('logged_id'));
       setAnotherId(await AsyncStorage.getItem('another_id'));
       setName(await AsyncStorage.getItem('user_name'));
@@ -92,7 +76,78 @@ export default function ProfilePage({navigation}) {
       console.error(error);
     }
   }
-  getUserData();
+
+  useEffect(() => {
+    getUserData();
+  }, []); 
+  
+  //const sharp = require('sharp');
+
+  async function enviarImagem() {
+    let resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!resultado.canceled) {
+      // Resize image to 150x150
+      let resizedImage = await ImageManipulator.manipulateAsync(
+        resultado.assets[0].uri,
+      [{ resize: { width: 150, height: 150 } }],
+      { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
+      let id = await AsyncStorage.getItem('logged_id');
+      if (resizedImage.uri != null) {
+        let formData = new FormData();
+        formData.append('imagem', {
+          uri: resizedImage.uri,
+          name: id + '.jpg',
+          type: 'image/jpg',
+        });
+
+        console.log(id);
+        
+        axios.post('http://rafaelr2001.pythonanywhere.com/upload/' + id + '/nao_interessa_a_ninguem', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(async response => {
+          getUserImage();
+          // const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + id + '/nao_interessa_a_ninguem',{
+          //   method: "GET",
+          //   headers: {
+          //     Accept: "application/json",
+          //     "Content-Type": "application/json",
+          //   },
+          // });
+          // const data_photo = await response_photo.json();
+          // setImagem(data_photo.photo_data);
+          // console.log(data_photo.photo_data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+        // showAlert('Sucesso', 'Imagem alterada com sucesso');
+        // navigation.navigate("Menu");
+
+        // const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + id + '/nao_interessa_a_ninguem',{
+        //     method: "GET",
+        //     headers: {
+        //       Accept: "application/json",
+        //       "Content-Type": "application/json",
+        //     },
+        //     });
+
+        // const data_photo = await response_photo.json();
+        //setImagem(data_photo.photo_data);
+        // console.log(imagem);
+      }
+    }
+  }
 
   return(
     <SafeAreaView style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
@@ -104,7 +159,7 @@ export default function ProfilePage({navigation}) {
 
       {loggedId === anotherId ? (
         <TouchableOpacity onPress={enviarImagem}>
-          <Text style={styles.changeImage}>Change Image</Text>
+          <Text style={styles.changeImage}>Alterar Imagem</Text>
         </TouchableOpacity>
       ) : null}
 

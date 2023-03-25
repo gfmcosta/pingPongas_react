@@ -19,12 +19,32 @@ export default function Menu({navigation}) {
     );
   };
   const matchButton = async() => {
+    let id = await AsyncStorage.getItem('logged_id');
+    const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + id + '/nao_interessa_a_ninguem',{
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+    const data_photo = await response_photo.json();
+    await AsyncStorage.setItem('imagem', ''+ data_photo.photo_data);
+    console.log(data_photo);
     let user_id = await AsyncStorage.getItem('logged_id');
     await AsyncStorage.setItem('logged_id', ''+ user_id);
     navigation.navigate("addMatch");
   }
-    const rankingButton = () => {
+    const rankingButton = async() => {
+        const response = await fetch('http://rafaelr2001.pythonanywhere.com/stats/nao_interessa_a_ninguem');
+        const jsonData = await response.json();
+        await AsyncStorage.setItem('stats', ''+ JSON.stringify(jsonData));
         navigation.navigate("Ranking");
+      }
+      const historyButton = async() => {
+        const response = await fetch('http://rafaelr2001.pythonanywhere.com/matches/nao_interessa_a_ninguem');
+        const jsonData = await response.json();
+        await AsyncStorage.setItem('matches', ''+ JSON.stringify(jsonData));
+        navigation.navigate("matchHistory");
       }
     const profileButton = async() => {
       try {
@@ -101,7 +121,8 @@ export default function Menu({navigation}) {
         onPress={rankingButton}>
             <Text style={styles.buttonText}>Ranking</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button}
+        onPress={historyButton}>
             <Text style={styles.buttonText}>Histórico</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}

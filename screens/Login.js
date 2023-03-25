@@ -43,6 +43,7 @@ export default function LoginPage({navigation}) {
           await AsyncStorage.setItem('logged_id', ''+data.id);
           await AsyncStorage.setItem('user_name', ''+data.name);
           await AsyncStorage.setItem('logged_name', ''+data.name);
+          await AsyncStorage.setItem('logged_username', username);
           navigation.navigate("Menu");
         }
       }

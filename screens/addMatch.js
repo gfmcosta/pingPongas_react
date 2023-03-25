@@ -15,17 +15,20 @@ export default function CreateMatch({ navigation }) {
   const [loserPoints, setLoserPoints] = useState('');
   const [selectedValue, setSelectedValue] = useState('');
   const [searchText, setSearchText] = useState('');
+  const [imagem, setImagem] = useState('');
 
   const countries = ["Egypt", "Canada", "Australia", "Ireland"]
   const [users, setUsers] = useState([]);
   const fetchData = async () => {
-    const response = await fetch('http://rafaelr2001.pythonanywhere.com/users/nao_interessa_a_ninguem');
+    // const response = await fetch('http://rafaelr2001.pythonanywhere.com/users/nao_interessa_a_ninguem');
+    const response = await fetch('http://rafaelr2001.pythonanywhere.com/fotos/nao_interessa_a_ninguem');
     const jsonData = await response.json();
     let user_id = await AsyncStorage.getItem('logged_id');
     //console.log(jsonData);
     const data = jsonData.filter(user => user.id !== parseInt(user_id));
     console.log(data);
     setUsers(data);
+    setImagem(await AsyncStorage.getItem('imagem'));
   };
   
   useEffect(() => {
@@ -34,6 +37,7 @@ export default function CreateMatch({ navigation }) {
   
   const createMatch = () => {
     // add logic to create match here
+    navigation.navigate("addMatch2");
   };
   
   return (
@@ -44,8 +48,14 @@ export default function CreateMatch({ navigation }) {
         <Image style={styles.logo} source={{ uri: 'https://media.baamboozle.com/uploads/images/46796/1596490426_373473' }} />
       </View>
       <SelectDropdown
-        data={users.map((data,index) => (
-            data.username
+        data={users.map((item,index) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image
+              source={{ uri: `data:image/jpeg;base64,${item.image_data}` }}
+              style={{ width: 40, height: 40, borderRadius: 75, marginRight: 10 }}
+            />
+            <Text>{item.username}</Text>
+            </View>
           ))
         }
         // defaultValueByIndex={1}
@@ -170,7 +180,7 @@ export default function CreateMatch({ navigation }) {
 const styles = StyleSheet.create({
   dropdown1BtnStyle: {
     width: '100%',
-    height: 60,
+    height: 70,
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: '#c7c7c7',
@@ -179,6 +189,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     marginTop: 16,
     marginBottom: 16,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   dropdown1BtnTxtStyle: {
@@ -197,7 +209,7 @@ const styles = StyleSheet.create({
   },
 
   dropdown1DropdownStyle: {
-    height: 300,
+    //height: 300,
     backgroundColor: '#EFEFEF',
   },
 

@@ -4,12 +4,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RankingPage({navigation}) {
 
-  const [data, setData] = useState([]);
+const [data, setData] = useState([]);
 const fetchData = async () => {
-  const response = await fetch('http://rafaelr2001.pythonanywhere.com/stats/nao_interessa_a_ninguem');
-  const jsonData = await response.json();
-  console.log(jsonData);
-  setData(jsonData);
+  // const response = await fetch('http://rafaelr2001.pythonanywhere.com/stats/nao_interessa_a_ninguem');
+  // const jsonData = await response.json();
+  const stats = JSON.parse(await AsyncStorage.getItem('stats'));
+  console.log(stats);
+  setData(stats);
   data.sort((a, b) => b.score - a.score);
 };
 
@@ -79,6 +80,7 @@ const handleButtonClick = async(user_id,name) => {
                 >
                 <View key={index} style={[styles.item, index+1 === 1 ? styles.itemG : index+1 === 2 ? styles.itemS : index+1 === 3 ? styles.itemB : null]}>
                     <Text style={styles.position}>{index+1}</Text>
+                    <Image source={{uri: `data:image/jpeg;base64,${data.image_data}`}} style={styles.logo}/>
                     <Text style={styles.name}>{data.user_name}</Text>
                     <Text style={styles.score}>{data.score}</Text>
                 </View>
@@ -104,10 +106,11 @@ const styles = StyleSheet.create({
 
   },
   logo: {
-    width: 32,
-    height: 32,
+    width: 38,
+    height: 38,
     textAlign: 'center',
     marginRight: 8,
+    borderRadius: 75
   },
   title: {
     color: '#fff',
