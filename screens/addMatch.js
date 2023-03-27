@@ -16,6 +16,7 @@ export default function CreateMatch({ navigation }) {
   const [selectedValue, setSelectedValue] = useState('');
   const [searchText, setSearchText] = useState('');
   const [imagem, setImagem] = useState('');
+  const [vsUsername, setVsUsername] = useState('');
 
   const countries = ["Egypt", "Canada", "Australia", "Ireland"]
   const [users, setUsers] = useState([]);
@@ -35,9 +36,28 @@ export default function CreateMatch({ navigation }) {
     fetchData();
   }, []);
   
-  const createMatch = () => {
+  const createMatch = async() => {
     // add logic to create match here
-    navigation.navigate("addMatch2");
+    const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/fotos/nao_interessa_a_ninguem',{
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+    });
+    const data_photo = await response_photo.json();
+
+    const filteredData = data_photo.filter((item) => {
+        return item.username === vsUsername;
+    });
+    
+    filteredData.forEach(async(item) => {
+        const imageData = item.image_data;
+        await AsyncStorage.setItem('vs_image', imageData);
+    });
+    // console.log(filteredData.image_data);
+    await AsyncStorage.setItem('vs_username', vsUsername);
+    navigation.navigate("addMatch3");
   };
   
   return (
@@ -61,7 +81,7 @@ export default function CreateMatch({ navigation }) {
         // defaultValueByIndex={1}
         // defaultValue={'Egypt'}
         onSelect={(selectedItem, index) => {
-          console.log(selectedItem, index);
+          setVsUsername(React.Children.toArray(selectedItem.props.children).find(child => child.type === Text).props.children);
           setWinnerPoints;
         }}
         defaultButtonText={'Selecionar adversário'}
@@ -69,6 +89,7 @@ export default function CreateMatch({ navigation }) {
           return selectedItem;
         }}  
         rowTextForSelection={(item, index) => {
+          console.log(item);
           return item;
         }}
         buttonStyle={styles.dropdown1BtnStyle}
@@ -278,5 +299,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-

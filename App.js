@@ -5,7 +5,7 @@ import Profile from "./screens/Profile";
 import Menu from "./screens/Menu";
 import Register from "./screens/Register";
 import addMatch from "./screens/addMatch";
-import addMatch2 from "./screens/addMatch2";
+import addMatch3 from "./screens/addMatch3";
 import matchHistory from "./screens/matchHistory"
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -52,8 +52,8 @@ export default function App() {
           options={{ headerShown: false}}
         />
         <Stack.Screen
-          name="addMatch2"
-          component={addMatch2}
+          name="addMatch3"
+          component={addMatch3}
           options={{ headerShown: false}}
         />
          <Stack.Screen
