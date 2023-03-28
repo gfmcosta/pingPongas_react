@@ -56,7 +56,6 @@ export default function HistoricoPartidas({ navigation }) {
     const matches = JSON.parse(await AsyncStorage.getItem('matches'));
     setUsername(user);
     setPartidas(matches);
-    console.log(matches)
   };
   
   useEffect(() => {

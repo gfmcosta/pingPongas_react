@@ -1,21 +1,85 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, Alert,View, Image, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SplashPage( {navigation} ) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [visible, setVisible] = useState('');
+  const [isLoading,setIsLoading] = useState(false)
+
+  const showAlert = (titulo, mensagem) => {
+    Alert.alert(
+      titulo,
+      mensagem,
+      [
+        {
+          text: 'OK',
+          onPress: () => setVisible(false),
+        },
+      ]
+    );
+  };
+
   useEffect(() => {
-    // Aqui você pode adicionar sua lógica de carregamento
-    // Por exemplo, você pode redirecionar o usuário para a página de login após alguns segundos.
-    setTimeout(() => {
-      console.log('Redirecionando para a página de login...');
-    }, 2000);
+    
+    const fetchRememberedCredentials = async () => {
+      const username = await AsyncStorage.getItem('remembered_username');
+      const password = await AsyncStorage.getItem('remembered_password');
+      console.log(username)
+      setUsername(username ?? '');
+      setPassword(password ?? '');
+      if (username != null){
+        handleLogin();
+      }else{
+        setIsLoading(true)
+      }
+    }
+  
+    fetchRememberedCredentials();
+
   }, []);
 
+  const handleLogin = async () => {
+    try {
+      const username = await AsyncStorage.getItem('remembered_username');
+      const password = await AsyncStorage.getItem('remembered_password');
+      const response = await fetch('http://rafaelr2001.pythonanywhere.com/auth/' + username + '/' + password, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status === 404) {
+        showAlert('Acesso Negado', 'Utilizador não encontrado');
+      } else if (response.status === 401) {
+        showAlert('Acesso Negado', 'Credenciais inválidas');
+      } else {
+        const data = await response.json();
+        if (data !== null) {
+          await AsyncStorage.setItem('user_id', ''+data.id);
+          await AsyncStorage.setItem('logged_id', ''+data.id);
+          await AsyncStorage.setItem('user_name', ''+data.name);
+          await AsyncStorage.setItem('logged_name', ''+data.name);
+          await AsyncStorage.setItem('logged_username', username);
+          navigation.navigate("Menu");
+        }
+      }
+  
+    } catch (error) {
+      console.error(error);
+    }
+
+    // navigation.navigate("Menu");
+
+  }
   
   const handleButtonClick = () => {
     navigation.navigate("Login", {language: "pt"});
   }
-
-  return (
+  
+  return ( isLoading ?(
     <View style={styles.container}>
       <Image 
         style={styles.logo}
@@ -29,6 +93,8 @@ export default function SplashPage( {navigation} ) {
         <Text style={styles.buttonText}>Iniciar Sessão</Text>
       </TouchableOpacity>
     </View>
+  ):
+  <></>
   );
 }
 

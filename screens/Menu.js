@@ -18,6 +18,13 @@ export default function Menu({navigation}) {
       ]
     );
   };
+
+  const logOutButton = async() => {
+    await AsyncStorage.removeItem('remembered_username')
+    await AsyncStorage.removeItem('remembered_password')
+    navigation.navigate("Login");
+  }
+
   const matchButton = async() => {
     let id = await AsyncStorage.getItem('logged_id');
     const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + id + '/nao_interessa_a_ninguem',{
@@ -129,6 +136,10 @@ export default function Menu({navigation}) {
         onPress={profileButton}>
             <Text style={styles.buttonText}>Perfil</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.button}
+        onPress={logOutButton}>
+            <Text style={styles.buttonText}>Terminar Sessão</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -170,7 +181,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#778899',
     width: '100%',
-    height: '20%',
+    height: '17%',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',

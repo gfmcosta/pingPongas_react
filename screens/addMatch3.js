@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Image, TouchableOpacity, SafeAreaView, StatusBar, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function CreateMatch3({ navigation }) {
@@ -9,20 +9,56 @@ const [player1Points, setplayer1Points] = useState('');
 const [player2Points, setplayer2Points] = useState('');
 const [player1Imagem, setplayer1Imagem] = useState('');
 const [player2Imagem, setplayer2Imagem] = useState('');
+const [vencedorPoints, setVencedorPoints] = useState('');
+const [perdedorPoints, setPerdedorPoints] = useState('');
+const [visible, setVisible] = useState(false);
+
+
+const showAlert = (titulo, mensagem) => {
+  Alert.alert(
+    titulo,
+    mensagem,
+    [
+      {
+        text: 'OK',
+        onPress: () => setVisible(false),
+      },
+    ]
+  );
+};
 
 const fetchData = async () => {
-setplayer1Imagem(await AsyncStorage.getItem('imagem'));
-setplayer2Imagem(await AsyncStorage.getItem('vs_image'));
-setplayer1(await AsyncStorage.getItem('logged_username'));
-setplayer2(await AsyncStorage.getItem('vs_username'));
+  setplayer1Imagem(await AsyncStorage.getItem('imagem'));
+  setplayer2Imagem(await AsyncStorage.getItem('vs_image'));
+  setplayer1(await AsyncStorage.getItem('logged_username'));
+  setplayer2(await AsyncStorage.getItem('vs_username'));
 };
 
 useEffect(() => {
-fetchData();
+  fetchData();
 }, []);
 
-const handleAddGame = () => {
-// Lógica para adicionar a partida ao sistema
+const handleAddGame = async() => {
+    // Lógica para adicionar a partida ao sistema
+    const data = { player1_username: player1, player2_username: player2, player1_points: player1Points, player2_points: player2Points};
+    const response = await fetch('http://rafaelr2001.pythonanywhere.com/matches/nao_interessa_a_ninguem', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      //
+      body: JSON.stringify(data)
+    });
+    if (response.status === 201) {
+      //showAlert("Sucesso", "Sucesso");
+      navigation.navigate("Menu");
+    }
+    else if(response.status === 402){
+      showAlert("Erro", "A partida não pode terminar em empate");
+    }
+    else{
+      showAlert("Erro", "Resultado inválido");
+    }
 };
 
 return (
@@ -40,7 +76,6 @@ style={styles.soTexto}
 <TextInput
 style={styles.input}
 placeholder="Pontos"
-keyboardType='numeric'
 onChangeText={text => setplayer1Points(text)}
 value={player1Points}
 />

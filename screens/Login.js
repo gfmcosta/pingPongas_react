@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
+import { Alert,StyleSheet, Switch ,Text, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function LoginPage({navigation}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const [rememberMe, setRememberMe] = useState(false);
   const [visible, setVisible] = useState(false);
 
   const showAlert = (titulo, mensagem) => {
@@ -24,7 +25,6 @@ export default function LoginPage({navigation}) {
 
   const handleLogin = async () => {
     try {
-
       const response = await fetch('http://rafaelr2001.pythonanywhere.com/auth/' + username + '/' + password, {
         method: "GET",
         headers: {
@@ -39,6 +39,11 @@ export default function LoginPage({navigation}) {
       } else {
         const data = await response.json();
         if (data !== null) {
+
+          if (rememberMe) {
+            await AsyncStorage.setItem('remembered_username', username);
+            await AsyncStorage.setItem('remembered_password', password);
+          }    
           await AsyncStorage.setItem('user_id', ''+data.id);
           await AsyncStorage.setItem('logged_id', ''+data.id);
           await AsyncStorage.setItem('user_name', ''+data.name);
@@ -81,6 +86,14 @@ export default function LoginPage({navigation}) {
         value={password}
         onChangeText={(text) => setPassword(text)}
       />
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+        <Text style={{ marginRight: 10 }}>Manter sessão iniciada?</Text>
+        <Switch
+          value={rememberMe}
+          onValueChange={setRememberMe}
+        />
+      </View>
+
       <TouchableOpacity 
         style={styles.button}
         onPress={handleLogin}
