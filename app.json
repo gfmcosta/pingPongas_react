@@ -15,16 +15,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.atsoc24.PingPongas"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "https://mobimg.b-cdn.net/v2/fetch/2f/2f122b890294529f3cc48a36e82773c4.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.atsoc24.PingPongas"
     },
     "web": {
       "favicon": "https://mobimg.b-cdn.net/v2/fetch/2f/2f122b890294529f3cc48a36e82773c4.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0087829c-dac2-4476-bd0e-4a6712989a47"
+      }
     }
   }
 }
