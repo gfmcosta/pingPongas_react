@@ -9,9 +9,7 @@ const fetchData = async () => {
   // const response = await fetch('http://rafaelr2001.pythonanywhere.com/stats/nao_interessa_a_ninguem');
   // const jsonData = await response.json();
   const stats = JSON.parse(await AsyncStorage.getItem('stats'));
-  console.log(stats);
   setData(stats);
-  data.sort((a, b) => b.score - a.score);
 };
 
 useEffect(() => {
@@ -51,7 +49,7 @@ const handleButtonClick = async(user_id,name) => {
     });
     
     const data_photo = await response_photo.json();
-    await AsyncStorage.setItem('imagem', ''+data_photo.photo_data);
+    await AsyncStorage.setItem('imagem', ''+data_photo.image);
     await AsyncStorage.setItem('another_id', ''+ user_id);
 
     navigation.navigate("Profile");
@@ -61,7 +59,7 @@ const handleButtonClick = async(user_id,name) => {
 }
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
+    <SafeAreaView style={[styles.container, { paddingTop: 0 }]}>
       <StatusBar backgroundColor="#f4511e" barStyle="dark-content" />
       <View style={styles.header}>
         <Image
@@ -80,7 +78,7 @@ const handleButtonClick = async(user_id,name) => {
                 >
                 <View key={index} style={[styles.item, index+1 === 1 ? styles.itemG : index+1 === 2 ? styles.itemS : index+1 === 3 ? styles.itemB : null]}>
                     <Text style={styles.position}>{index+1}</Text>
-                    <Image source={{uri: `data:image/jpeg;base64,${data.image_data}`}} style={styles.logo}/>
+                    <Image source={{uri: 'https://rafaelr2001.pythonanywhere.com/images/'+data.image}} style={styles.logo}/>
                     <Text style={styles.name}>{data.user_name}</Text>
                     <Text style={styles.score}>{data.score}</Text>
                 </View>
@@ -108,7 +106,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 38,
     height: 38,
-    textAlign: 'center',
     marginRight: 8,
     borderRadius: 75
   },
