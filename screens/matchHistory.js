@@ -6,7 +6,6 @@ export default function HistoricoPartidas({ navigation }) {
   const [filtroJogador, setFiltroJogador] = useState(null);
   const [partidas, setPartidas] = useState([]);
   const [username, setUsername] = useState('');
-
   const handleButtonClick = async(user_id,name) => {
     try {
       await AsyncStorage.setItem('user_id', ''+user_id);
@@ -40,7 +39,7 @@ export default function HistoricoPartidas({ navigation }) {
       });
       
       const data_photo = await response_photo.json();
-      await AsyncStorage.setItem('imagem', ''+data_photo.photo_data);
+      await AsyncStorage.setItem('imagem', ''+data_photo.image);
       await AsyncStorage.setItem('another_id', ''+ user_id);
   
       navigation.navigate("Profile");
@@ -73,7 +72,7 @@ export default function HistoricoPartidas({ navigation }) {
           <View style={{alignItems: 'center'}}>
             <Text style={styles.itemTextLegend}>Vencedor</Text>
             <TouchableOpacity onPress={() => handleButtonClick(item.vencedor_id,item.vencedor)}>
-              <Image source={{uri: `data:image/jpeg;base64,${item.vencedor_image}`}} style={styles.image}/>
+              <Image source={{uri: 'https://rafaelr2001.pythonanywhere.com/images/'+item.vencedor_image}} style={styles.image}/>
             </TouchableOpacity>
             <Text style={styles.itemTextVName}>{item.vencedor}</Text>
             <Text style={styles.itemTextV}>{item.scoreVencedor}</Text>
@@ -82,7 +81,7 @@ export default function HistoricoPartidas({ navigation }) {
           <View style={{alignItems: 'center'}}>
             <Text style={styles.itemTextLegend}>Perdedor</Text>
             <TouchableOpacity onPress={() => handleButtonClick(item.perdedor_id,item.perdedor)}>
-              <Image source={{uri: `data:image/jpeg;base64,${item.perdedor_image}`}} style={styles.image} />
+              <Image source={{uri: 'https://rafaelr2001.pythonanywhere.com/images/'+item.perdedor_image}} style={styles.image} />
             </TouchableOpacity>
             <Text style={styles.itemTextPName}>{item.perdedor}</Text>
             <Text style={styles.itemTextP}>{item.scorePerdedor}</Text>

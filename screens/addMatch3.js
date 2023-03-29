@@ -69,7 +69,7 @@ return (
 </View>
 <View style={styles.formContainer}>
 <View style={styles.inputContainer}>
-<Image source={{uri: `data:image/jpeg;base64,${player1Imagem}`}} style={styles.inputImage} />
+<Image source={{uri: 'https://rafaelr2001.pythonanywhere.com/images/'+player1Imagem}} style={styles.inputImage} />
 <Text
 style={styles.soTexto}
 >{player1}</Text>
@@ -82,7 +82,7 @@ value={player1Points}
 </View>
 <View style={styles.inputSeparator} />
 <View style={styles.inputContainer}>
-<Image source={{uri: `data:image/jpeg;base64,${player2Imagem}`}} style={styles.inputImage} />
+<Image source={{uri: 'https://rafaelr2001.pythonanywhere.com/images/'+player2Imagem}} style={styles.inputImage} />
 <Text
 style={styles.soTexto}
 >{player2}</Text>

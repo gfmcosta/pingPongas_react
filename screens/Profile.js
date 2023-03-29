@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Alert, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity } from 'react-native';
+import { View, Text, Alert, StyleSheet, Image, SafeAreaView, StatusBar, TouchableOpacity, BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import axios from 'axios';
 
 export default function ProfilePage({navigation}) {
+  
   const [loggedId, setLoggedId] = useState('');
   const [anotherId, setAnotherId] = useState('');
   const [name, setName] = useState('');
@@ -43,8 +44,7 @@ export default function ProfilePage({navigation}) {
         },
       });
       const data_photo = await response_photo.json();
-      // console.log(data_photo.photo_data);
-      setImagem(data_photo.photo_data);
+      setImagem(data_photo.image);
     }
     catch (error) {
       console.error(error);
@@ -65,7 +65,6 @@ export default function ProfilePage({navigation}) {
       setWinStreak(await AsyncStorage.getItem('winStreak'));
       setWinPercentage(await AsyncStorage.getItem('victoryChance'));
       setImagem(await AsyncStorage.getItem('imagem'));
-      
       // console.log(imagem);
       
       // const photoUri = `data:image/jpeg;base64,${imagem}`;
@@ -108,7 +107,6 @@ export default function ProfilePage({navigation}) {
           type: 'image/jpg',
         });
 
-        console.log(id);
         
         axios.post('http://rafaelr2001.pythonanywhere.com/upload/' + id + '/nao_interessa_a_ninguem', formData, {
           headers: {
@@ -117,34 +115,10 @@ export default function ProfilePage({navigation}) {
         })
         .then(async response => {
           getUserImage();
-          // const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + id + '/nao_interessa_a_ninguem',{
-          //   method: "GET",
-          //   headers: {
-          //     Accept: "application/json",
-          //     "Content-Type": "application/json",
-          //   },
-          // });
-          // const data_photo = await response_photo.json();
-          // setImagem(data_photo.photo_data);
-          // console.log(data_photo.photo_data);
         })
         .catch(error => {
           console.log(error);
         });
-        // showAlert('Sucesso', 'Imagem alterada com sucesso');
-        // navigation.navigate("Menu");
-
-        // const response_photo = await fetch('http://rafaelr2001.pythonanywhere.com/foto/' + id + '/nao_interessa_a_ninguem',{
-        //     method: "GET",
-        //     headers: {
-        //       Accept: "application/json",
-        //       "Content-Type": "application/json",
-        //     },
-        //     });
-
-        // const data_photo = await response_photo.json();
-        //setImagem(data_photo.photo_data);
-        // console.log(imagem);
       }
     }
   }
@@ -154,7 +128,7 @@ export default function ProfilePage({navigation}) {
     <StatusBar backgroundColor="#f4511e" barStyle="dark-content" />
       <Image
         style={styles.avatar}
-        source={{ uri: `data:image/jpeg;base64,${imagem}` }}
+        source={{uri: 'https://rafaelr2001.pythonanywhere.com/images/'+imagem}}
       />
 
       {loggedId === anotherId ? (
@@ -177,12 +151,12 @@ export default function ProfilePage({navigation}) {
           </View>
           <View style={[styles.stat, winPercentage >50 ? styles.statG : null]}>
             <Text style={[styles.statLabel, winPercentage >50 ? styles.statLabelG : null]}>% de Vitória</Text>
-            <Text style={styles.statValue}>{winPercentage}%</Text>
+            <Text style={styles.statValue}>{parseFloat(winPercentage).toFixed(2)}%</Text>
 
           </View>
           <View style={styles.stat}>
             <Text style={styles.statLabel}>Partidas ganhas</Text>
-            <Text style={styles.statValue}>{winPercentage}</Text>
+            <Text style={styles.statValue}>{numGamesWon}</Text>
           </View>
           <View style={styles.stat}>
             <Text style={styles.statLabel}>Win Streak</Text>

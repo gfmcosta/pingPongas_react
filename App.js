@@ -7,15 +7,19 @@ import Register from "./screens/Register";
 import addMatch from "./screens/addMatch";
 import addMatch3 from "./screens/addMatch3";
 import matchHistory from "./screens/matchHistory"
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+
 const Stack = createNativeStackNavigator();
-export default function App() {
+
+
+
+export default function App(navigation) {
   
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ gestureEnabled: true}}>
         <Stack.Screen
           name="SplashPage"
           component={SplashPage}
@@ -24,7 +28,7 @@ export default function App() {
         <Stack.Screen
           name="Login"
           component={Login}
-          options={{ headerShown: false }}
+          options={{ headerShown: false}}
         />
         <Stack.Screen
           name="Register"
@@ -44,7 +48,7 @@ export default function App() {
         <Stack.Screen
           name="Menu"
           component={Menu}
-          options={{ headerShown: false}}
+          options={{ headerShown: false,gestureEnabled:false}}
         />
         <Stack.Screen
           name="addMatch"

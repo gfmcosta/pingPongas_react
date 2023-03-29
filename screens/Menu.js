@@ -1,14 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
-import { Alert, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, BackHandler } from 'react-native';
 import axios from 'axios';
 import { Buffer } from 'buffer';
 
 export default function Menu({navigation}) {
+
+  useEffect(() => {
+    const backButtonHandler = () => {
+      navigation.navigate("Menu");
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backButtonHandler
+    );
+    return () => backHandler.remove();
+  }, []);
+  
   const [visible, setVisible] = useState(false);
   const showAlert = (titulo, mensagem) => {
     Alert.alert(
-      titulo,
+      titulo, 
       mensagem,
       [
         {
@@ -18,7 +31,6 @@ export default function Menu({navigation}) {
       ]
     );
   };
-
   const logOutButton = async() => {
     await AsyncStorage.removeItem('remembered_username')
     await AsyncStorage.removeItem('remembered_password')
@@ -35,8 +47,7 @@ export default function Menu({navigation}) {
       },
     });
     const data_photo = await response_photo.json();
-    await AsyncStorage.setItem('imagem', ''+ data_photo.photo_data);
-    console.log(data_photo);
+    await AsyncStorage.setItem('imagem', ''+ data_photo.image);
     let user_id = await AsyncStorage.getItem('logged_id');
     await AsyncStorage.setItem('logged_id', ''+ user_id);
     navigation.navigate("addMatch");
@@ -58,7 +69,6 @@ export default function Menu({navigation}) {
         let user_id = await AsyncStorage.getItem('logged_id');
         let user_name = await AsyncStorage.getItem('logged_name');
         await AsyncStorage.setItem('user_name', ''+user_name);
-        console.log(user_id);
         const response = await fetch('http://rafaelr2001.pythonanywhere.com/stats/' + user_id + '/nao_interessa_a_ninguem',{
           method: "GET",
           headers: {
@@ -86,26 +96,8 @@ export default function Menu({navigation}) {
           },
           });
           const data_photo = await response_photo.json();
-          // console.log(data_photo.photo_data);
-          await AsyncStorage.setItem('imagem', ''+data_photo.photo_data);
+          await AsyncStorage.setItem('imagem', ''+data_photo.image);
           await AsyncStorage.setItem('another_id', ''+ user_id);
-
-          // axios.get('http://rafaelr2001.pythonanywhere.com/foto/'+ user_id + '/nao_interessa_a_ninguem')
-          //   .then(async response => {
-          //     const photoData = response.data;
-          //     console.log(photoData);
-          //     // const base64EncodedPhotoData = Buffer.from(photoData).toString('base64');
-              
-          //     // console.log(base64EncodedPhotoData);
-
-          //     // const base64EncodedPhotoData = btoa(String.fromCharCode.apply(null, photoData));
-              
-          //     await AsyncStorage.setItem('imagem', ''+photoData);
-          //   })
-          //   .catch(error => {
-          //     console.log(error);
-          //   });
-            
           navigation.navigate("Profile");
         } 
     
@@ -113,9 +105,12 @@ export default function Menu({navigation}) {
         console.error(error);
       }
     }
+    
+    
+
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
-    <StatusBar backgroundColor="#f4511e" barStyle="dark-content" />
+    <SafeAreaView style={[styles.container, { paddingTop: 0 }]}>
+    <StatusBar backgroundColor="#f4511e" barStyle="dark-content"/>
       <View style={styles.header}>
         <Text style={styles.headerText}>Menu</Text>
       </View>

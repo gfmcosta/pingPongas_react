@@ -25,9 +25,7 @@ export default function CreateMatch({ navigation }) {
     const response = await fetch('http://rafaelr2001.pythonanywhere.com/fotos/nao_interessa_a_ninguem');
     const jsonData = await response.json();
     let user_id = await AsyncStorage.getItem('logged_id');
-    //console.log(jsonData);
     const data = jsonData.filter(user => user.id !== parseInt(user_id));
-    console.log(data);
     setUsers(data);
     setImagem(await AsyncStorage.getItem('imagem'));
   };
@@ -52,10 +50,9 @@ export default function CreateMatch({ navigation }) {
     });
     
     filteredData.forEach(async(item) => {
-        const imageData = item.image_data;
+        const imageData = item.image;
         await AsyncStorage.setItem('vs_image', imageData);
     });
-    // console.log(filteredData.image_data);
     await AsyncStorage.setItem('vs_username', vsUsername);
     navigation.navigate("addMatch3");
   };
@@ -71,7 +68,7 @@ export default function CreateMatch({ navigation }) {
         data={users.map((item,index) => (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image
-              source={{ uri: `data:image/jpeg;base64,${item.image_data}` }}
+              source={{uri: 'https://rafaelr2001.pythonanywhere.com/images/'+item.image}}
               style={{ width: 40, height: 40, borderRadius: 75, marginRight: 10 }}
             />
             <Text>{item.username}</Text>
@@ -89,7 +86,6 @@ export default function CreateMatch({ navigation }) {
           return selectedItem;
         }}  
         rowTextForSelection={(item, index) => {
-          console.log(item);
           return item;
         }}
         buttonStyle={styles.dropdown1BtnStyle}
